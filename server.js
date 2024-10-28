@@ -1,46 +1,78 @@
-require('dotenv').config(); // Load environment variables from .env
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
-const cors = require('cors'); // Allow cross-origin requests
-
-const familyRoutes = require('./routes/familyRoutes'); // Adjust path if needed
+const cors = require('cors');
+const familyRoutes = require('./routes/familyRoutes');
 
 const app = express();
-const PORT = process.env.PORT || 5000; // Use environment variable or default to 5000
-const uri = process.env.MONGODB_URI; // MongoDB connection string
+const PORT = process.env.PORT || 5000;
 
-// Apply CORS middleware
 app.use(cors());
+app.use(express.json());
 
-// Middleware to parse JSON bodies
-app.use(express.json()); 
-
-// Connect to MongoDB
 async function connectToMongoDB() {
   try {
-    await mongoose.connect(uri, {
+    await mongoose.connect(process.env.MONGODB_URI, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
-      serverSelectionTimeoutMS: 5000, // Timeout to avoid hanging
-      dbName: "family_tree", // Optional: Ensure you use the correct database
+      dbName: 'family_tree',
     });
-    console.log("Connected to MongoDB with Mongoose");
+    console.log('Connected to MongoDB');
   } catch (error) {
-    console.error("MongoDB connection error:", error);
-    process.exit(1); // Exit process if unable to connect
+    console.error('MongoDB connection error:', error);
+    process.exit(1);
   }
 }
 
-// Call function to connect to MongoDB
 connectToMongoDB();
-
-// Routes
 app.use('/api/family', familyRoutes);
 
-// Start the server
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
+app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
+
+
+// require('dotenv').config(); // Load environment variables from .env
+// const express = require('express');
+// const mongoose = require('mongoose');
+// const cors = require('cors'); // Allow cross-origin requests
+
+// const familyRoutes = require('./routes/familyRoutes'); // Adjust path if needed
+
+// const app = express();
+// const PORT = process.env.PORT || 5000; // Use environment variable or default to 5000
+// const uri = process.env.MONGODB_URI; // MongoDB connection string
+
+// // Apply CORS middleware
+// app.use(cors());
+
+// // Middleware to parse JSON bodies
+// app.use(express.json()); 
+
+// // Connect to MongoDB
+// async function connectToMongoDB() {
+//   try {
+//     await mongoose.connect(uri, {
+//       useNewUrlParser: true,
+//       useUnifiedTopology: true,
+//       serverSelectionTimeoutMS: 5000, // Timeout to avoid hanging
+//       dbName: "family_tree", // Optional: Ensure you use the correct database
+//     });
+//     console.log("Connected to MongoDB with Mongoose");
+//   } catch (error) {
+//     console.error("MongoDB connection error:", error);
+//     process.exit(1); // Exit process if unable to connect
+//   }
+// }
+
+// // Call function to connect to MongoDB
+// connectToMongoDB();
+
+// // Routes
+// app.use('/api/family', familyRoutes);
+
+// // Start the server
+// app.listen(PORT, () => {
+//   console.log(`Server running on http://localhost:${PORT}`);
+// });
 
 
 
